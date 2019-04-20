@@ -1,0 +1,43 @@
+<!-- Estendemos do template base -->
+{% extends "ctfidelidade/_layouts/base.html" %}
+<!-- Bloco que define o <title></title> da nossa página -->
+{% block title %}Página Inicial{% endblock %}
+<!-- Bloco de conteúdo da nossa página -->
+{% block conteudo %}
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Cadastrar Registros</h5>
+            <p class="card-text">
+              Cadastre aqui um novo <code>Registro</code>.
+            </p>
+            <a href="{% url 'ctfidelidade:cadastra_registro' %}"
+              class="btn btn-primary">
+              Novo Registro
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Lista de Registros</h5>
+            <p class="card-text">
+              Veja aqui a lista de <code>Registros</code> cadastrados.
+            </p>
+            <a href="{% url 'ctfidelidade:lista_registros' %}"
+              class="btn btn-primary">
+              Lista completa
+            </a>
+            <a href="{% url 'ctfidelidade:busca_registros' %}"
+              class="btn btn-primary">
+              Buscar por cliente
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

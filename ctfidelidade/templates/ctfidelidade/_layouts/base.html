@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    {% load static %}
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <!-- Title -->
+        <title>{% block title %}Sistema de registro de cartões de Fidelidade{% endblock %}</title>
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="{% static 'ctfidelidade/img/favicon.png' %}" type="image/png">
+        <!-- Arquivos CSS -->
+        <link rel="stylesheet" type="text/css" href="{% static 'ctfidelidade/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'ctfidelidade/css/master.css' %}">
+        {% block styles %}{% endblock %}
+    </head>
+    <body>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="{% url 'ctfidelidade:index' %}" data-toggle="tooltip" data-placement="bottom" title="REEEEEEEEEEE!!">
+                <img src="{% static 'ctfidelidade/img/favicon.png' %}" height="45px">
+            </a>
+            <button class="navbar-toggler" type="button"
+            data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'ctfidelidade:index' %}">Página Inicial</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'ctfidelidade:lista_registros' %}" >Listar Registros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'ctfidelidade:busca_registros' %}">Buscar Registros</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        
+        <!-- Conteúdo do site -->
+        {% block conteudo %}{% endblock %}
+        <!-- Scripts .js -->
+        <script src="{% static 'ctfidelidade/js/popper.min.js' %}"></script>
+        <script src="{% static 'ctfidelidade/js/jquery.min.js' %}"></script>
+        <script src="{% static 'ctfidelidade/js/bootstrap.min.js' %}"></script>
+        {% block scripts %}{% endblock %}
+        <script>
+        $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+        });
+        </script>
+        <script src="{% static 'ctfidelidade/js/scripts.js' %}"></script>
+    </body>
+</html>
