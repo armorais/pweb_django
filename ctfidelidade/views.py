@@ -12,10 +12,6 @@ from ctfidelidade.forms import InsereRegistroForm
 from .filters import ClienteRegistroFilter, ClientePremioFilter
 from django.shortcuts import render
 
-#
-#	Registros
-#
-
 class RegistrosList(APIView):
 	def get(self, request, format=None):
 		registros = Registros.objects.all()
