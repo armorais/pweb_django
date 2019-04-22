@@ -1,0 +1,62 @@
+{% extends "ctfidelidade/_layouts/base.html" %}
+{% block conteudo %}
+	<ul>
+		<div class="card">
+			<div class="card-body">
+				<h5 class="card-title">Buscar Registros</h5>
+				
+				<form method="get">
+					{{ filter.form.as_p }}
+					<input class="btn btn-primary" type="submit" value="Buscar">
+					<a href="{% url 'ctfidelidade:index' %}" class="btn btn-outline-primary">Voltar</a>
+				</form>
+				
+			</div>
+		</div>
+		
+		<div class="card">
+			<div class="card-body">
+				<h5 class="card-title">Lista de Registros</h5>
+				{% if filter.qs|length > 0 %}
+					<p class="card-text">
+						Aqui está a lista de <code>Registros</code> cadastrados do cliente.
+					</p>
+					<table class="table">
+						<thead class="thead-dark">
+							<tr>
+								<th scope="col">Data</th>
+								<th scope="col">Serviço</th>
+								<th scope="col">Cliente</th>
+								<th scope="col">Válido</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for registro in filter.qs|dictsortreversed:"data" %}
+								<tr>
+									<td>{{ registro.data }}</td>
+									<td>{{ registro.servico }}</td>
+									<td>{{ registro.cliente }}</td>
+									<td>{{ registro.status }}</td>
+									<td class="text-center">
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				{% else %}
+					<div class="text-center mt-5 mb-5 jumbotron">
+						<h5>Nenhum <code>registro</code> cadastrado ainda.</h5>
+					</div>
+				{% endif %}
+				<hr />
+				<div class="text-right">
+					<a href="{% url 'ctfidelidade:cadastra_registro' %}" class="btn btn-primary">
+						Cadastrar Registro
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+{% endblock %}

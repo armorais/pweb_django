@@ -34,6 +34,10 @@ class Registros(models.Model):
 	cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
 	status = models.BooleanField(default=True)
 
+	@property
+	def valido(self):
+		return ((datetime.datetime.now(pytz.utc) - self.data).days <= self.servico.validade)
+
 	def __str__(self):
 		return self.data.strftime('%m/%d/%Y')
 
@@ -47,41 +51,9 @@ class Premios(models.Model):
 	cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
 	baixado = models.BooleanField(default=False)
 
+	@property
+	def valido(self):
+		return ((datetime.datetime.now(pytz.utc) - self.data).days <= self.servico.validade)
+
 	def __str__(self):
 		return self.data.strftime('%m/%d/%Y')
-
-
-# @receiver(post_save, sender=Registros)
-# def ensure_profile_exists(sender, instance, created, **kwargs):
-#     if created == True:
-#     	cliente = instance.cliente
-#     	validar_registros(cliente.cpf);
-
-# def validar_registros(cpf):
-# 	print(cpf)
-# 	registros = Registros.objects.filter(cliente__cpf = cpf)
-# 	print(len(registros))
-# 	contador = 0
-# 	validos = []
-# 	for aux in registros:
-# 		dias = datetime.datetime.now(pytz.utc) - aux.data
-# 		servico = aux.servico
-# 		data_invalida = dias.days > servico.validade
-# 		if (data_invalida):
-# 			aux.status = False
-# 			aux.save()
-# 		elif((not data_invalida) and (not aux.status)):
-# 			contador+=1
-# 			validos.append(aux)
-# 			if (contador>=servico.entradas):
-# 				for aux in validos:
-# 					aux.status = False
-# 					aux.save()
-# 				print("premio gerado")	# TO DO: Adicionar aqui a lógica de criação de novo registro
-# 				premio = Premios()
-# 				premio.baixado = False
-# 				premio.cliente = aux.cliente
-# 				premio.data = timezone.now()
-# 				premio.servico = aux.servico
-# 				premio.save()
-# 				break    

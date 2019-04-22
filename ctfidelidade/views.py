@@ -9,7 +9,7 @@ from django.http import Http404
 from django.views.generic import TemplateView, ListView, CreateView
 from django.urls import reverse_lazy
 from ctfidelidade.forms import InsereRegistroForm
-from .filters import ClienteFilter
+from .filters import ClienteRegistroFilter, ClientePremioFilter
 from django.shortcuts import render
 
 #
@@ -29,8 +29,6 @@ class RegistrosList(APIView):
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# TODO - Separar a parte lógica da view
-
 class RegistroDetail(APIView):
 	serializer_class = RegistrosSerializer
 
@@ -43,7 +41,7 @@ class IndexTemplateView(TemplateView):
     template_name = "ctfidelidade/index.html"
 
 class RegistrosListView(ListView):
-    template_name = "ctfidelidade/lista.html"
+    template_name = "ctfidelidade/lista_registros.html"
     model = Registros
     context_object_name = "registros"
 
@@ -53,28 +51,31 @@ class RegistroCreateView(CreateView):
     form_class = InsereRegistroForm
     success_url = reverse_lazy("ctfidelidade:lista_registros")
 
+# TO DO: quebrar o método em partes
+
     def validar_registros(self, cpf):
     	print(cpf)
-    	registros = Registros.objects.filter(cliente__cpf = cpf)
+    	registros = Registros.objects.filter(cliente__cpf = cpf).filter(status = True)
     	print(len(registros))
     	contador = 0
-    	validos = []
+    	validos = {}
     	for aux in registros:
-    		dias = datetime.datetime.now(pytz.utc) - aux.data
+    		data_valida = aux.valido
     		servico = aux.servico
-    		data_invalida = dias.days > servico.validade
-    		if (data_invalida):
+    		if (not data_valida):
     			aux.status = False
     			aux.save()
-    		if((data_invalida == False) and (aux.status == True)):
-    			contador+=1
-    			validos.append(aux)
-    			if (contador>=servico.entradas):
-    				for reg in validos:
-    					print(reg.data)
-    					reg.status = False
-    					reg.save()
-    					print("premio gerado")
+    		else:
+    			if(servico.id not in validos):
+    				validos[servico.id] = []
+    			validos[servico.id].append(aux)
+    			lista_validos = validos.get(servico.id)
+    			if(len(lista_validos) >= servico.entradas):
+    				for reg in lista_validos:
+    			 		print(reg.data)
+    			 		reg.status = False
+    			 		reg.save()
+    			 		print("premio gerado")
     				premio = Premios()
     				premio.baixado = False
     				premio.cliente = aux.cliente
@@ -91,15 +92,15 @@ class RegistroCreateView(CreateView):
 	    cpf = cliente.cpf
 	    self.validar_registros(cpf)
 	    premios_cliente = Premios.objects.filter(cliente__cpf = cpf)
-	    return render(self.request, 'ctfidelidade/premios.html', {'premios': premios_cliente})
+	    return render(self.request, 'ctfidelidade/lista_premios.html', {'premios': premios_cliente})
 
 
-def busca(request):
+def busca_registros(request):
  	registros_cliente_list = Registros.objects.all()
- 	registros_cliente_filter = ClienteFilter(request.GET, queryset=registros_cliente_list)
- 	return render(request, 'ctfidelidade/busca.html', {'filter': registros_cliente_filter}) 	
+ 	registros_cliente_filter = ClienteRegistroFilter(request.GET, queryset=registros_cliente_list)
+ 	return render(request, 'ctfidelidade/busca_registros.html', {'filter': registros_cliente_filter}) 	
 
-def premios(request, cpf):
- 	premios_list = Premios.objects.all()
- 	premios_filter = ClienteFilter(request.GET, queryset=premios_list)
- 	return render(request, 'ctfidelidade/premios.html', {'filter': premios_filter})
+def busca_premios(request):
+ 	premios_cliente_list = Premios.objects.all()
+ 	premios_cliente_filter = ClientePremioFilter(request.GET, queryset=premios_cliente_list)
+ 	return render(request, 'ctfidelidade/busca_premios.html', {'filter': premios_cliente_filter}) 

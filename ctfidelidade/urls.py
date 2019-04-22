@@ -10,9 +10,8 @@ urlpatterns = [
     path('', IndexTemplateView.as_view(), name="index"),
     path('registro/cadastrar', RegistroCreateView.as_view(), name="cadastra_registro"),
     path('registros/', RegistrosListView.as_view(), name="lista_registros"),
-    url(r'^busca/$', busca, name='busca_registros'),
-#   	url(r'^registros_fw/',RegistrosList.as_view(),name='home'),
-#    url(r'^registro_fw/(?P<cpf>[\w\-]+)/$',RegistroDetail.as_view(),name='home2')
+    url(r'^busca_registros/$', busca_registros, name='busca_registros'),
+    url(r'^busca_premios/$', busca_premios, name='busca_premios'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
