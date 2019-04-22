@@ -46,6 +46,7 @@
             <div class="text-right">
               <a href="{% url 'ctfidelidade:lista_registros' %}" class="btn btn-outline-primary">Voltar</a>
               <button class="btn btn-primary">Enviar</button>
+              <input type="hidden" name="cpf_cliente" value="{{book.token}}">
             </div>
           </form>
         </div>

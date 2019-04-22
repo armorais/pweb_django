@@ -6,7 +6,6 @@ from rest_framework.response import Response
 from django.utils import timezone
 from rest_framework import status
 from django.http import Http404
-from ctfidelidade.validators import *
 from django.views.generic import TemplateView, ListView, CreateView
 from django.urls import reverse_lazy
 from ctfidelidade.forms import InsereRegistroForm
@@ -52,14 +51,55 @@ class RegistroCreateView(CreateView):
     template_name = "ctfidelidade/cria.html"
     model = Registros
     form_class = InsereRegistroForm
-    success_url = reverse_lazy("ctfidelidade:lista_registros")    
+    success_url = reverse_lazy("ctfidelidade:lista_registros")
+
+    def validar_registros(self, cpf):
+    	print(cpf)
+    	registros = Registros.objects.filter(cliente__cpf = cpf)
+    	print(len(registros))
+    	contador = 0
+    	validos = []
+    	for aux in registros:
+    		dias = datetime.datetime.now(pytz.utc) - aux.data
+    		servico = aux.servico
+    		data_invalida = dias.days > servico.validade
+    		if (data_invalida):
+    			aux.status = False
+    			aux.save()
+    		if((data_invalida == False) and (aux.status == True)):
+    			contador+=1
+    			validos.append(aux)
+    			if (contador>=servico.entradas):
+    				for reg in validos:
+    					print(reg.data)
+    					reg.status = False
+    					reg.save()
+    					print("premio gerado")
+    				premio = Premios()
+    				premio.baixado = False
+    				premio.cliente = aux.cliente
+    				premio.data = timezone.now()
+    				premio.servico = aux.servico
+    				premio.save()
+    				break
+
+    def form_valid(self, form):
+	    """If the form is valid, save the associated model."""
+	    self.object = form.save()
+	    registro = self.object
+	    cliente = registro.cliente
+	    cpf = cliente.cpf
+	    self.validar_registros(cpf)
+	    premios_cliente = Premios.objects.filter(cliente__cpf = cpf)
+	    return render(self.request, 'ctfidelidade/premios.html', {'premios': premios_cliente})
+
 
 def busca(request):
- 	clientes_list = Registros.objects.all()
- 	cliente_filter = ClienteFilter(request.GET, queryset=clientes_list)
- 	return render(request, 'ctfidelidade/busca.html', {'filter': cliente_filter})
+ 	registros_cliente_list = Registros.objects.all()
+ 	registros_cliente_filter = ClienteFilter(request.GET, queryset=registros_cliente_list)
+ 	return render(request, 'ctfidelidade/busca.html', {'filter': registros_cliente_filter}) 	
 
-def premios(request):
+def premios(request, cpf):
  	premios_list = Premios.objects.all()
  	premios_filter = ClienteFilter(request.GET, queryset=premios_list)
  	return render(request, 'ctfidelidade/premios.html', {'filter': premios_filter})

@@ -4,16 +4,11 @@
 		<div class="card">
 			<div class="card-body">
 				<h5 class="card-title">Buscar Registros</h5>
-		
-
-
-
-
+				
 				<form method="get">
 					{{ filter.form.as_p }}
 					<input class="btn btn-primary" type="submit" value="Buscar">
 					<a href="{% url 'ctfidelidade:index' %}" class="btn btn-outline-primary">Voltar</a>
-					<a href="{% url 'ctfidelidade:listar_premios' %}" class="btn btn-outline-primary">Ver prêmios</a>
 				</form>
 				
 			</div>
